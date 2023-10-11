@@ -144,9 +144,11 @@ describe("Given I am connected as an employee", () => {
       const handleChangeFile = jest.fn(newBill.handleChangeFile)
       file.addEventListener("change", handleChangeFile)
       fireEvent.change(file, {
-        target: {
-         files: [new File(["image"], "test.pdf", {type: "image/pdf"})]
-        }
+        files: [
+          new File(["image"], "test.jpg", { type: "image/jpeg" }),
+          new File(["image"], "test.jpeg", { type: "image/jpeg" }),
+          new File(["image"], "test.png", { type: "image/png" })
+        ]
       })
       expect(file.value).toBe('')
     })
