@@ -1,7 +1,6 @@
 /**
  * @jest-environment jsdom
  */
-
 import { screen, fireEvent } from "@testing-library/dom"
 import NewBillUI from "../views/NewBillUI.js"
 import { localStorageMock } from "../__mocks__/localStorage.js"
@@ -146,11 +145,39 @@ describe("Given I am connected as an employee", () => {
       fireEvent.change(file, {
         files: [
           new File(["image"], "test.jpg", { type: "image/jpeg" }),
-          new File(["image"], "test.jpeg", { type: "image/jpeg" }),
-          new File(["image"], "test.png", { type: "image/png" })
         ]
       })
       expect(file.value).toBe('')
     })
+
+    let newBill;
+
+    beforeEach(() => {
+      const html = NewBillUI();
+      document.body.innerHTML = html;
+      newBill = new NewBill({
+        document,
+        onNavigate,
+        store: Store,
+        localStorage: window.localStorage,
+      });
+    });
+    
+    test("Then the upload valid", () => {
+      const file = screen.getByTestId("file");
+  
+      const validImageContent = new Uint8Array([137, 80, 78, 71, 13, 10, 26, 10]);
+      const validImageFile = new File([validImageContent], "test.jpg", { type: "image/jpeg" });
+  
+      const handleChangeFile = jest.fn(newBill.handleChangeFile);
+      file.addEventListener("change", handleChangeFile);
+  
+      fireEvent.change(file, {
+        files: [validImageFile],
+      });
+
+      expect(handleChangeFile).toHaveBeenCalled();
+    });
   })
 })
+
